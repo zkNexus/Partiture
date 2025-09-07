@@ -6,8 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Music, Heart, Play, Share2, Edit3, Calendar, Trophy, Upload, Clock, Crown, Zap, Star } from "lucide-react"
+import { Music, Heart, Play, Share2, Edit3, Calendar, Trophy, Upload, Clock, Crown, Zap, Star, Settings } from "lucide-react"
 import { UniversalHeader } from "@/components/universal-header"
+import Link from "next/link"
 
 // Mock user data
 const userData = {
@@ -104,7 +105,6 @@ export default function ProfilePage() {
           { label: "Playlist", href: "/playlist" },
           { label: "Dashboard", href: "/dashboard" },
           { label: "Profile", href: "/profile" },
-          { label: "Settings", href: "/settings" },
         ]}
       />
 
@@ -157,6 +157,11 @@ export default function ProfilePage() {
                     <Edit3 className="h-5 w-5" />
                     {isEditing ? "Save" : "Edit Profile"}
                   </Button>
+                  <Link href="/settings">
+                    <Button variant="outline" size="lg" className="gap-2 bg-transparent">
+                      <Settings className="h-5 w-5" />
+                    </Button>
+                  </Link>
                   <Button variant="outline" size="lg" className="gap-2 bg-transparent">
                     <Share2 className="h-5 w-5" />
                     Share

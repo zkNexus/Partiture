@@ -3,8 +3,9 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, Home, Search, Plus, User, Settings, Music, Users, PlayCircle, ListMusic, X } from "lucide-react"
+import { Menu, Home, Search, Plus, User, Settings, Music, Users, PlayCircle, ListMusic, X, Wallet } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { WalletConnectButton, WalletStatus } from "@/components/wallet-connect-button"
 import { cn } from "@/lib/utils"
 
 const navItems = [
@@ -85,6 +86,17 @@ export function DesktopSidebar() {
               )
             })}
           </nav>
+
+          {/* Wallet Section */}
+          <div className="p-4 border-t border-border">
+            <div className="mb-4">
+              <div className="flex items-center space-x-2 mb-3">
+                <Wallet className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium text-muted-foreground">Wallet</span>
+              </div>
+              <WalletConnectButton />
+            </div>
+          </div>
 
           {/* Footer */}
           <div className="p-4 border-t border-border">
