@@ -1,3 +1,5 @@
+"use client"
+
 import { UniversalHeader } from "@/components/universal-header"
 import { SheetMusicViewer } from "@/components/sheet-music-viewer"
 import { SocialInteractions } from "@/components/social-interactions"
