@@ -87,7 +87,7 @@ export default function HomePage() {
       />
 
       {/* Hero Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-background via-card/30 to-muted/50 relative overflow-hidden">
+      <section className="py-10 px-4 bg-gradient-to-br from-background via-card/30 to-muted/50 relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
             src="/beautiful-music-studio-with-piano-sheet-music-and-.jpg"
@@ -99,9 +99,9 @@ export default function HomePage() {
 
         <div className="container mx-auto text-center max-w-4xl relative z-10">
           <div className="mb-8">
-            <Badge variant="secondary" className="mb-6 px-4 py-2 text-base font-semibold shadow-lg">
+            {/* <Badge variant="secondary" className="mb-6 px-4 py-2 text-base font-semibold shadow-lg">
               🎵 AI-Powered Music Sheet Generation
-            </Badge>
+            </Badge> */}
             <h2 className="text-4xl md:text-6xl font-bold text-balance mb-6">
               Transform Your Music into
               <span className="text-primary bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text">
