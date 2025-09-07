@@ -94,9 +94,10 @@ export function UniversalHeader({
 
             {showLogo && (
               <Link href="/" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                {/* <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-sm">P</span>
-                </div>
+                </div> */}
+                <img src="/icon.png" alt="Partiture" className="w-12 h-12 rounded-lg" />
                 <span className="font-bold text-lg text-primary bg-gradient-to-r from-primary to-secondary bg-clip-text hidden sm:block">
                   Partiture
                 </span>
