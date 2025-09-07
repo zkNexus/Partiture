@@ -1,3 +1,5 @@
+"use client"
+
 import { UniversalHeader } from "@/components/universal-header"
 import { AudioPlayer } from "@/components/audio-player"
 import { VirtualPiano } from "@/components/virtual-piano"
