@@ -54,15 +54,36 @@ export function MultiEnvironmentProviders({ children }: PropsWithChildren) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Detect environment on client side
-    const detectedEnv = detectEnvironment()
-    setEnvironment(detectedEnv)
-    setIsLoading(false)
+    // Initial detection
+    const initialEnv = detectEnvironment()
+    console.log('🔍 Initial environment detection:', initialEnv)
+    
+    // If initially detected as browser, wait a moment for Farcaster SDK to load
+    if (initialEnv === 'browser') {
+      const recheckTimer = setTimeout(() => {
+        const recheckEnv = detectEnvironment()
+        console.log('🔍 Re-check environment detection:', recheckEnv)
+        if (recheckEnv !== initialEnv) {
+          console.log(`🔄 Environment changed: ${initialEnv} → ${recheckEnv}`)
+          setEnvironment(recheckEnv)
+        }
+      }, 500) // Wait 500ms for SDK to potentially load
+      
+      // Set initial environment
+      setEnvironment(initialEnv)
+      setIsLoading(false)
+      
+      return () => clearTimeout(recheckTimer)
+    } else {
+      // If Farcaster detected immediately, use it
+      setEnvironment(initialEnv)
+      setIsLoading(false)
+    }
 
-    // Log environment info in development
+    // Log environment info
+    console.log('🎯 Multi-Environment Provider Router')
+    console.log('📱 Detected Environment:', initialEnv)
     if (process.env.NODE_ENV === 'development') {
-      console.log('🎯 Multi-Environment Provider Router')
-      console.log('📱 Detected Environment:', detectedEnv)
       logEnvironmentInfo()
     }
   }, [])
@@ -102,14 +123,14 @@ export function EnvironmentStatus() {
     setEnvironment(detectEnvironment())
   }, [])
 
-  // Only show in development
-  if (process.env.NODE_ENV !== 'development') {
-    return null
-  }
+  // Show in all environments temporarily for debugging
+  // if (process.env.NODE_ENV !== 'development') {
+  //   return null
+  // }
 
   return (
     <div className="fixed bottom-4 right-4 z-50 bg-black/80 text-white px-3 py-1 rounded-full text-xs font-mono">
-      {/* ENV: {environment} */}
+      ENV: {environment}
     </div>
   )
 }

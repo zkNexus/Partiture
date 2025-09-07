@@ -44,24 +44,34 @@ export function detectEnvironment(): AppEnvironment {
     }
   }
 
-  // Check for development/production domains (ngrok or vercel) - but only if other indicators suggest Farcaster
-  if (typeof window !== 'undefined') {
-    const hostname = window.location?.hostname || ''
-    if (hostname.includes('ngrok.io') || hostname.includes('vercel.app')) {
-      // Additional checks to confirm this is actually a Farcaster context
-      const isInFrame = window !== window.parent || window !== window.top
-      const hasSmallViewport = window.innerWidth <= 450 // Farcaster frames are typically small
-      const referrerIndicatesFarcaster = document.referrer && 
-        (document.referrer.includes('farcaster') || document.referrer.includes('warpcast'))
-      
-      if (isInFrame || hasSmallViewport || referrerIndicatesFarcaster) {
-        console.log(`🔧 Domain detected: ${hostname} with Farcaster indicators - assuming Farcaster environment`)
-        const isMobile = window.innerWidth < 768
-        return isMobile ? 'farcaster-mobile' : 'farcaster-web'
-      } else {
-        console.log(`🌐 Domain detected: ${hostname} but no Farcaster indicators - staying browser`)
-      }
-    }
+  // Check for iframe context (Farcaster Mini Apps run in iframes)
+  const isInFrame = typeof window !== 'undefined' && (
+    window !== window.parent || window !== window.top
+  )
+  
+  // Check for Farcaster-specific window properties that may load later
+  const hasFarcasterWindow = typeof window !== 'undefined' && (
+    (window as any).FarcasterProvider ||
+    (window as any).farcasterProvider ||
+    document.referrer.includes('farcaster') ||
+    document.referrer.includes('warpcast')
+  )
+  
+  if (isInFrame || hasFarcasterWindow) {
+    console.log('🔍 Farcaster context detected:', {
+      isInFrame,
+      hasFarcasterWindow,
+      referrer: document.referrer,
+      viewport: `${window?.innerWidth || 0}x${window?.innerHeight || 0}`
+    })
+    
+    const isMobile = typeof window !== 'undefined' && (
+      /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+      window.innerWidth < 768
+    )
+    
+    console.log(`🎯 Farcaster environment confirmed - ${isMobile ? 'mobile' : 'web'}`)
+    return isMobile ? 'farcaster-mobile' : 'farcaster-web'
   }
 
   // Default to browser environment
