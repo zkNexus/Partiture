@@ -1,0 +1,143 @@
+"use client"
+
+import { useEffect, useRef, useState } from "react"
+
+interface FractalVisualizerProps {
+  isPlaying: boolean
+  currentTrack?: string
+  className?: string
+}
+
+export function FractalVisualizer({ isPlaying, currentTrack, className = "" }: FractalVisualizerProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const animationRef = useRef<number>()
+  const [audioData, setAudioData] = useState<number[]>(new Array(64).fill(0))
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+
+    const resizeCanvas = () => {
+      const rect = canvas.getBoundingClientRect()
+      canvas.width = rect.width * window.devicePixelRatio
+      canvas.height = rect.height * window.devicePixelRatio
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
+    }
+
+    resizeCanvas()
+    window.addEventListener("resize", resizeCanvas)
+
+    return () => {
+      window.removeEventListener("resize", resizeCanvas)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isPlaying) {
+      // Simulate audio data when playing
+      const interval = setInterval(() => {
+        setAudioData((prev) => prev.map(() => Math.random() * 100 + Math.sin(Date.now() * 0.001) * 50))
+      }, 50)
+      return () => clearInterval(interval)
+    } else {
+      // Gradually fade out when not playing
+      const interval = setInterval(() => {
+        setAudioData((prev) => prev.map((val) => val * 0.95))
+      }, 50)
+      return () => clearInterval(interval)
+    }
+  }, [isPlaying])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+
+    const animate = () => {
+      const rect = canvas.getBoundingClientRect()
+      ctx.clearRect(0, 0, rect.width, rect.height)
+
+      const centerX = rect.width / 2
+      const centerY = rect.height / 2
+      const time = Date.now() * 0.001
+
+      // Draw fractal patterns
+      for (let i = 0; i < audioData.length; i++) {
+        const angle = (i / audioData.length) * Math.PI * 2
+        const intensity = audioData[i] / 100
+        const radius = 50 + intensity * 100
+
+        // Main fractal arms
+        for (let j = 0; j < 3; j++) {
+          const armAngle = angle + (j * Math.PI * 2) / 3
+          const x1 = centerX + Math.cos(armAngle) * radius
+          const y1 = centerY + Math.sin(armAngle) * radius
+
+          // Sub-fractals
+          for (let k = 0; k < 5; k++) {
+            const subAngle = armAngle + (k * Math.PI) / 10 + time
+            const subRadius = radius * 0.3 + intensity * 20
+            const x2 = x1 + Math.cos(subAngle) * subRadius
+            const y2 = y1 + Math.sin(subAngle) * subRadius
+
+            // Color based on intensity and position
+            const hue = (i * 6 + time * 50) % 360
+            const saturation = 70 + intensity * 30
+            const lightness = 50 + intensity * 20
+
+            ctx.strokeStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`
+            ctx.lineWidth = 1 + intensity * 2
+            ctx.globalAlpha = 0.7 + intensity * 0.3
+
+            ctx.beginPath()
+            ctx.moveTo(centerX, centerY)
+            ctx.lineTo(x2, y2)
+            ctx.stroke()
+
+            // Add glowing effect
+            ctx.shadowColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`
+            ctx.shadowBlur = 10 + intensity * 10
+          }
+        }
+      }
+
+      // Central pulsing circle
+      const pulseRadius = 20 + (audioData.reduce((a, b) => a + b, 0) / audioData.length) * 0.5
+      const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, pulseRadius)
+      gradient.addColorStop(0, `hsla(${(time * 100) % 360}, 80%, 60%, 0.8)`)
+      gradient.addColorStop(1, `hsla(${(time * 100) % 360}, 80%, 60%, 0)`)
+
+      ctx.fillStyle = gradient
+      ctx.beginPath()
+      ctx.arc(centerX, centerY, pulseRadius, 0, Math.PI * 2)
+      ctx.fill()
+
+      ctx.globalAlpha = 1
+      ctx.shadowBlur = 0
+
+      animationRef.current = requestAnimationFrame(animate)
+    }
+
+    animate()
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current)
+      }
+    }
+  }, [audioData])
+
+  return (
+    <div
+      className={`relative overflow-hidden bg-gradient-to-br from-black/90 via-purple-900/50 to-blue-900/50 ${className}`}
+    >
+      <canvas ref={canvasRef} className="w-full h-full" style={{ display: "block" }} />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+    </div>
+  )
+}
