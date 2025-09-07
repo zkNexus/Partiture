@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Music, Upload, Play, PlusCircle } from "lucide-react"
 import Link from "next/link"
 import { UniversalHeader } from "@/components/universal-header"
+import { FarcasterReadySignal } from "@/components/farcaster-ready"
 
 // Mock data for shared music sheets
 const sharedMusicSheets = [
@@ -71,7 +72,9 @@ const sharedMusicSheets = [
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <FarcasterReadySignal />
+      <div className="min-h-screen bg-background">
       <UniversalHeader
         position="sticky"
         showLogo={true}
@@ -80,7 +83,6 @@ export default function HomePage() {
           { label: "Playlist", href: "/playlist" },
           { label: "Dashboard", href: "/dashboard" },
           { label: "Profile", href: "/profile" },
-          { label: "Settings", href: "/settings" },
         ]}
       />
 
@@ -311,6 +313,7 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
-    </div>
+      </div>
+    </>
   )
 }

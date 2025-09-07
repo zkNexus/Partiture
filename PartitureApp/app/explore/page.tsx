@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Slider } from "@/components/ui/slider"
-import { Heart, Play, Pause, Share2, Music, ArrowLeft, Volume2, VolumeX, Volume1, Plus, List } from "lucide-react"
+import { Heart, Play, Pause, Share2, Music, ArrowLeft, Volume2, VolumeX, Volume1, Plus, List, Search, X } from "lucide-react"
 import Link from "next/link"
 import { UniversalHeader } from "@/components/universal-header"
 
@@ -161,13 +161,15 @@ export default function ExplorePage() {
   const [isMuted, setIsMuted] = useState(false)
   const [volume, setVolume] = useState(75)
   const [showVolumeSlider, setShowVolumeSlider] = useState(false)
-  const [sheets, setSheets] = useState(exploreSheets)
+  const [allSheets] = useState(exploreSheets) // Keep original data
+  const [sheets, setSheets] = useState(exploreSheets) // Filtered data
   const [showPlaylistDialog, setShowPlaylistDialog] = useState(false)
   const [newPlaylistName, setNewPlaylistName] = useState("")
   const [playlists, setPlaylists] = useState([
     { id: 1, name: "My Favorites", sheets: [] },
     { id: 2, name: "Classical Collection", sheets: [] },
   ])
+  const [searchQuery, setSearchQuery] = useState("")
   const containerRef = useRef<HTMLDivElement>(null)
   const touchStartY = useRef(0)
   const touchEndY = useRef(0)
@@ -187,6 +189,40 @@ export default function ExplorePage() {
   useEffect(() => {
     setIsPlaying(true)
   }, [])
+
+  // Search functionality
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSheets(allSheets)
+      setCurrentIndex(0)
+      return
+    }
+
+    const query = searchQuery.toLowerCase().trim()
+    const filteredSheets = allSheets.filter(sheet => 
+      sheet.title.toLowerCase().includes(query) ||
+      sheet.composer.toLowerCase().includes(query) ||
+      sheet.genre.toLowerCase().includes(query) ||
+      sheet.sharedBy.toLowerCase().includes(query) ||
+      sheet.description.toLowerCase().includes(query)
+    )
+    
+    setSheets(filteredSheets)
+    setCurrentIndex(0)
+    
+    // Reset scroll position when search results change
+    if (containerRef.current) {
+      containerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [searchQuery, allSheets])
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query)
+  }
+
+  const clearSearch = () => {
+    setSearchQuery("")
+  }
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartY.current = e.targetTouches[0].clientY
@@ -346,23 +382,109 @@ export default function ExplorePage() {
           { label: "Playlist", href: "/playlist" },
           { label: "Dashboard", href: "/dashboard" },
           { label: "Profile", href: "/profile" },
-          { label: "Settings", href: "/settings" },
         ]}
       />
 
+      {/* Search Interface - Always Visible */}
+      <div className="bg-black/95 backdrop-blur-lg border-b border-white/10 px-4 py-3">
+        <div className="relative max-w-lg mx-auto">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/60" />
+          <Input
+            placeholder="Search music sheets, composers, genres..."
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="pl-10 pr-10 bg-white/10 border-white/30 text-white placeholder:text-white/60 focus:border-primary focus:ring-primary/20 h-10"
+          />
+          {searchQuery && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearSearch}
+              className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 p-0 text-white/60 hover:text-white"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+        
+        {/* Search Results Info */}
+        {searchQuery && (
+          <div className="text-center text-sm text-white/70 mt-2">
+            {sheets.length === 0 ? (
+              <span>No results found for "{searchQuery}"</span>
+            ) : (
+              <span>Found {sheets.length} result{sheets.length !== 1 ? 's' : ''}</span>
+            )}
+          </div>
+        )}
+
+        {/* Quick Search Tags - Only show when no search query */}
+        {!searchQuery && (
+          <div className="flex flex-wrap gap-2 justify-center mt-3">
+            {['Classical', 'Jazz', 'Rock', 'Pop', 'Baroque', 'Contemporary'].map((genre) => (
+              <Button
+                key={genre}
+                variant="outline"
+                size="sm"
+                onClick={() => handleSearch(genre)}
+                className="bg-white/5 border-white/20 text-white/80 hover:bg-white/20 text-xs px-3 py-1 h-6"
+              >
+                {genre}
+              </Button>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* TikTok-style Vertical Scroll Container */}
       <div
         ref={containerRef}
-        className="relative overflow-y-scroll snap-y snap-mandatory md:h-[calc(100vh-64px)] h-[calc(100vh-144px)] scrollbar-hide"
+        className="relative overflow-y-scroll snap-y snap-mandatory md:h-[calc(100vh-140px)] h-[calc(100vh-220px)] scrollbar-hide"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {sheets.map((sheet, index) => (
+        {sheets.length === 0 && searchQuery ? (
+          // No results state
+          <div className="relative snap-start md:h-[calc(100vh-140px)] h-[calc(100vh-220px)] flex items-center justify-center">
+            <Card className="w-full max-w-md mx-4 bg-black/40 backdrop-blur-lg border-white/20 text-white text-center">
+              <CardContent className="p-8">
+                <Music className="h-16 w-16 text-white/40 mx-auto mb-4" />
+                <h3 className="text-xl font-bold mb-2">No Results Found</h3>
+                <p className="text-white/70 mb-4">
+                  No music sheets match your search for "{searchQuery}"
+                </p>
+                <div className="space-y-3">
+                  <p className="text-sm text-white/60">Try searching for:</p>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {['Classical', 'Beethoven', 'Jazz', 'Contemporary'].map((suggestion) => (
+                      <Button
+                        key={suggestion}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleSearch(suggestion)}
+                        className="bg-white/10 border-white/20 text-white/80 hover:bg-white/20 text-xs"
+                      >
+                        {suggestion}
+                      </Button>
+                    ))}
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={clearSearch}
+                    className="mt-4 bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  >
+                    Clear Search
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        ) : (
+          sheets.map((sheet, index) => (
           <div
             key={sheet.id}
-            className="relative snap-start md:h-[calc(100vh-64px)] h-[calc(100vh-144px)] flex items-center justify-center"
+            className="relative snap-start md:h-[calc(100vh-140px)] h-[calc(100vh-220px)] flex items-center justify-center"
           >
             {/* Fractal Background */}
             <FractalBackground isPlaying={isPlaying && index === currentIndex} />
@@ -529,7 +651,8 @@ export default function ExplorePage() {
               </div>
             )}
           </div>
-        ))}
+          ))
+        )}
 
         {/* Scroll Indicator */}
         <div className="fixed right-2 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-1">
