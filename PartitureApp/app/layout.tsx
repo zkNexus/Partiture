@@ -55,7 +55,7 @@ export default function RootLayout({
 
             <MobileFooterNav />
             <Analytics />
-            <EnvironmentStatus />
+            {/* <EnvironmentStatus /> */}
           </ThemeProvider>
         </MultiEnvironmentProviders>
       </body>
