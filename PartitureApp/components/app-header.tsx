@@ -34,9 +34,10 @@ export function AppHeader({ onMenuToggle }: AppHeaderProps) {
             <Menu className="h-5 w-5" />
           </Button>
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+            {/* <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">P</span>
-            </div>
+            </div> */}
+            <img src="/icon.png" alt="Partiture" className="w-12 h-12 rounded-lg" />
             <span className="font-bold text-lg bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent hidden sm:block">
               Partiture
             </span>
