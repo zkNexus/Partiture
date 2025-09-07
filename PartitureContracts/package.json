@@ -1,0 +1,26 @@
+{
+  "name": "partiturecontracts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:sepolia": "hardhat run scripts/deploy.js --network baseSepolia",
+    "deploy:mainnet": "hardhat run scripts/deploy.js --network base",
+    "verify:sepolia": "node scripts/verify.js",
+    "verify:mainnet": "node scripts/verify.js",
+    "interact:sepolia": "node scripts/interact.js",
+    "interact:mainnet": "node scripts/interact.js",
+    "clean": "hardhat clean"
+  },
+  "keywords": ["blockchain", "nft", "music", "base", "ethereum"],
+  "author": "Partiture Team",
+  "license": "MIT",
+  "description": "Smart contracts for Partiture music sheet NFT platform on Base network",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "@openzeppelin/contracts": "^5.4.0",
+    "dotenv": "^17.2.2",
+    "hardhat": "^3.0.4"
+  }
+}
