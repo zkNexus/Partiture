@@ -2,7 +2,24 @@
 
 ## Project Overview
 
-**Partiture** is a comprehensive music platform that transforms audio files into beautiful sheet music with advanced playlist management and customizable visual effects. The project is built as a modern web application with plans for Base blockchain integration as a Mini App.
+**Partiture** is a comprehensive music platform that transforms audio files into beautiful sheet music with advanced playlist management and customizable visual effects. The project is built as a modern web application with Base blockchain integration as a Mini App.
+
+## Project Structure
+
+### Main Application (`/PartitureApp/`)
+- **Type**: Next.js 14 with App Router
+- **Purpose**: Main web application for users
+- **Tech Stack**: React, TypeScript, Tailwind CSS, Radix UI
+- **Domain**: partiture.xyz
+
+### Smart Contracts (`/PartitureContracts/`)
+- **Type**: Hardhat project with Solidity contracts  
+- **Purpose**: Blockchain contracts for NFT functionality
+- **Tech Stack**: Solidity, Hardhat, OpenZeppelin
+- **Networks**: Base Mainnet & Base Sepolia
+- **Features**: Music sheet NFTs, royalties, metadata management
+
+> **📋 Project Organization Rule**: All smart contracts MUST be placed in the `/PartitureContracts/` directory. The `/PartitureApp/` directory is exclusively for the main web application. This separation ensures clear organization between frontend and blockchain components.
 
 ## Current Implementation Status
 
@@ -47,11 +64,17 @@
 - Audio transcription system (planned with AI integration)
 - Sheet music generation (VexFlow integration planned)
 
+#### Smart Contracts System
+- **PartitureNFT Contract**: ERC-721 NFT contract with metadata storage
+- **Base Network Integration**: Deployed on Base Mainnet & Base Sepolia
+- **Features**: Royalty system, privacy controls, creator management
+- **Verification**: BaseScan integration for contract verification
+
 #### Base Blockchain Integration
-- Smart contract development for NFT minting
-- Farcaster Frame integration
-- Wallet connection system
-- IPFS metadata storage
+- **Frontend Integration**: Wallet connection system (planned)
+- **Farcaster Frame**: Mini App development (planned)  
+- **IPFS Integration**: Metadata storage (planned)
+- **Contract Interaction**: Web3 integration with deployed contracts
 
 ### 📱 **Application Structure**
 
