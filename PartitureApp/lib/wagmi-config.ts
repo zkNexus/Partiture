@@ -3,7 +3,7 @@ import { base, baseSepolia, mainnet } from 'wagmi/chains'
 
 export const wagmiConfig = getDefaultConfig({
   appName: 'Partiture - Music Sheet Generator & Sharing Platform',
-  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '9a7b9b9b9b9b9b9b9b9b9b9b9b9b9b9b',
+  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
   chains: [
     baseSepolia, // Default testnet for app functionality
     base,        // Base mainnet for production
